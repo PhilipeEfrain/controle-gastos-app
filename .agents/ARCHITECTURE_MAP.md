@@ -49,6 +49,7 @@
 | `DeficitAlertBanner` | `src/components/ui/DeficitAlertBanner.tsx` | Banner de alerta destacado quando há déficit na 2ª quinzena ou saldo global negativo. |
 | `FortnightCard` | `src/components/finance/FortnightCard.tsx` | Card de resumo da Quinzena (Entrada, Saídas, Saldo Restante). |
 | `ExpenseItemRow` | `src/components/finance/ExpenseItemRow.tsx` | Linha de despesa com checkbox interativo, valor, categoria e modal de código de comprovante. |
+| `ReceiptModal` | `src/components/finance/ReceiptModal.tsx` | Modal para inserção e edição rápida do código/comprovante de pagamento da conta. |
 | `TaxComparisonCard` | `src/components/finance/TaxComparisonCard.tsx` | Card comparativo de tributos (Previsto vs Pago vs Vencimento). |
 | `AuthScreen` | `src/screens/AuthScreen.tsx` | Tela de autenticação responsiva com abas Login e Cadastro e validação de erros. |
 
