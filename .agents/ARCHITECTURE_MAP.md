@@ -50,6 +50,7 @@
 | `FortnightCard` | `src/components/finance/FortnightCard.tsx` | Card de resumo da Quinzena (Entrada, Saídas, Saldo Restante). |
 | `ExpenseItemRow` | `src/components/finance/ExpenseItemRow.tsx` | Linha de despesa com checkbox interativo, valor, categoria e modal de código de comprovante. |
 | `TaxComparisonCard` | `src/components/finance/TaxComparisonCard.tsx` | Card comparativo de tributos (Previsto vs Pago vs Vencimento). |
+| `AuthScreen` | `src/screens/AuthScreen.tsx` | Tela de autenticação responsiva com abas Login e Cadastro e validação de erros. |
 
 ---
 
@@ -57,7 +58,15 @@
 
 | Hook | Arquivo | Descrição |
 | :--- | :--- | :--- |
-| `useAuth` | `src/hooks/useAuth.ts` | Fornece usuário autenticado, estado de loading e funções de login/logout. |
+| `useAuth` | `src/hooks/useAuth.tsx` | Fornece usuário autenticado, estado de loading e funções de login/logout. |
 | `useMonthlyCycle` | `src/hooks/useMonthlyCycle.ts` | Escuta e sincroniza o ciclo mensal e despesas do mês selecionado em tempo real. |
 | `useTaxes` | `src/hooks/useTaxes.ts` | Escuta os tributos e parcelas cadastrados para o usuário. |
 | `useResponsive` | `src/hooks/useResponsive.ts` | Auxilia na diferenciação de breakpoints entre Web Desktop, Tablet e Mobile. |
+
+---
+
+## 6. Segurança e Regras de Acesso
+
+| Artefato | Arquivo | Descrição |
+| :--- | :--- | :--- |
+| `Firestore Security Rules` | `firestore.rules` | Regras com isolamento de leitura e escrita estrita por `request.auth.uid == userId`. |
