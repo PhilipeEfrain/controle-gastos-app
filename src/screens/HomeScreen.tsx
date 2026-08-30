@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, useWindowDimensions, StatusBar } from 'react-native';
+import { View, Text, ScrollView, SafeAreaView, useWindowDimensions, StatusBar, Pressable } from 'react-native';
 import { AppCard } from '../components/ui/AppCard';
 import { AppButton } from '../components/ui/AppButton';
 import { BalanceBadge } from '../components/ui/BalanceBadge';
@@ -8,10 +8,12 @@ import { FortnightCard } from '../components/finance/FortnightCard';
 import { formatBRL } from '../utils/formatters';
 import { calculateGlobalBalance } from '../utils/calculations';
 import { Expense } from '../types/finance';
+import { useAuth } from '../hooks/useAuth';
 
 export const HomeScreen: React.FC = () => {
   const { width } = useWindowDimensions();
   const isWebWide = width >= 768; // Breakpoint para layout em colunas na Web
+  const { user, logout } = useAuth();
 
   // Dados reais da planilha contidos no Entendimento.md
   const [rendaQ1] = useState<number>(2588.51); // Dia 31
@@ -25,13 +27,37 @@ export const HomeScreen: React.FC = () => {
 
   const summary = calculateGlobalBalance(rendaQ1, rendaQ2, expenses);
 
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Usuário';
+
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
       <StatusBar barStyle="light-content" backgroundColor="#0F172A" />
       <ScrollView className="flex-1 px-4 py-6" contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Container centralizado para Web */}
         <View className="max-w-4xl w-full self-center">
-          {/* Header */}
+          {/* Header Superior com Perfil e Logout */}
+          <View className="flex-row justify-between items-center mb-6 pb-4 border-b border-slate-800">
+            <View className="flex-row items-center space-x-3">
+              <View className="w-10 h-10 rounded-full bg-emerald-600/30 border border-emerald-500/40 items-center justify-center">
+                <Text className="text-emerald-400 font-bold text-base">
+                  {displayName.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+              <View>
+                <Text className="text-white font-bold text-base">{displayName}</Text>
+                <Text className="text-slate-400 text-xs">{user?.email || 'Autenticado'}</Text>
+              </View>
+            </View>
+
+            <Pressable
+              onPress={logout}
+              className="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 active:bg-slate-700"
+            >
+              <Text className="text-slate-300 text-xs font-semibold">Sair</Text>
+            </Pressable>
+          </View>
+
+          {/* Título e Mês */}
           <View className="flex-row justify-between items-center mb-6">
             <View>
               <Text className="text-white text-2xl font-bold">Controle Quinzenal</Text>
