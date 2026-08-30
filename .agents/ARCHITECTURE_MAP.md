@@ -50,6 +50,8 @@
 | `FortnightCard` | `src/components/finance/FortnightCard.tsx` | Card de resumo da Quinzena (Entrada, Saídas, Saldo Restante). |
 | `ExpenseItemRow` | `src/components/finance/ExpenseItemRow.tsx` | Linha de despesa com checkbox interativo, valor, categoria e modal de código de comprovante. |
 | `ReceiptModal` | `src/components/finance/ReceiptModal.tsx` | Modal para inserção e edição rápida do código/comprovante de pagamento da conta. |
+| `ExpenseFormModal` | `src/components/finance/ExpenseFormModal.tsx` | Modal de formulário para criação e edição de despesas quinzenais com categorização. |
+| `IncomeFormModal` | `src/components/finance/IncomeFormModal.tsx` | Modal para configuração das rendas previstas da 1ª quinzena (Dia 31) e 2ª quinzena (Dia 15). |
 | `TaxComparisonCard` | `src/components/finance/TaxComparisonCard.tsx` | Card comparativo de tributos (Previsto vs Pago vs Vencimento). |
 | `AuthScreen` | `src/screens/AuthScreen.tsx` | Tela de autenticação responsiva com abas Login e Cadastro e validação de erros. |
 
