@@ -75,3 +75,11 @@
 | Artefato | Arquivo | Descrição |
 | :--- | :--- | :--- |
 | `Firestore Security Rules` | `firestore.rules` | Regras com isolamento de leitura e escrita estrita por `request.auth.uid == userId`. |
+
+---
+
+## 7. CI/CD e Automação de Qualidade
+
+| Artefato | Arquivo | Descrição |
+| :--- | :--- | :--- |
+| `GitHub Actions CI Pipeline` | `.github/workflows/ci.yml` | Pipeline contínuo que executa Typecheck, Jest e build do Expo Web em PRs e pushes na `main`. |
