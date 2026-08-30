@@ -29,15 +29,13 @@
 
 ### 3. 🎯 Ready for Dev
 
-| ID         | Título                                          | Responsável DEV | Branch                           | Card                                             |
-| :--------- | :---------------------------------------------- | :-------------- | :------------------------------- | :----------------------------------------------- |
-| `CARD-001` | Setup da Estrutura Base do Projeto (Web/Mobile) | DEV             | `feat/CARD-001-setup-stack-base` | [Ver Card](./cards/CARD-001-setup-stack-base.md) |
+*Nenhum card aguardando desenvolvimento no momento.*
 
 ---
 
 ### 4. ⚡ In Progress
 
-_Nenhum card em desenvolvimento no momento._
+*Nenhum card em desenvolvimento no momento.*
 
 ---
 
@@ -49,4 +47,6 @@ _Nenhum card em revisão no momento._
 
 ### 6. ✅ Done / Merged
 
-_Nenhum card finalizado no momento._
+| ID | Título | Responsável DEV | PR / Branch | Card |
+| :--- | :--- | :--- | :--- | :--- |
+| `CARD-001` | Setup da Estrutura Base do Projeto (React Native + Expo Web & App) | DEV | `feat/CARD-001-setup-stack-base` | [Ver Card](./cards/CARD-001-setup-stack-base.md) |
