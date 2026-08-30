@@ -17,6 +17,7 @@ import { FortnightCard } from '../components/finance/FortnightCard';
 import { ReceiptModal } from '../components/finance/ReceiptModal';
 import { ExpenseFormModal } from '../components/finance/ExpenseFormModal';
 import { IncomeFormModal } from '../components/finance/IncomeFormModal';
+import { TaxesListModal } from '../components/finance/TaxesListModal';
 import { formatBRL } from '../utils/formatters';
 import { Expense, FortnightNumber } from '../types/finance';
 import { useAuth } from '../hooks/useAuth';
@@ -45,6 +46,7 @@ export const HomeScreen: React.FC = () => {
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState<boolean>(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState<boolean>(false);
   const [isIncomeModalOpen, setIsIncomeModalOpen] = useState<boolean>(false);
+  const [isTaxesModalOpen, setIsTaxesModalOpen] = useState<boolean>(false);
 
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'Usuário';
 
@@ -195,10 +197,10 @@ export const HomeScreen: React.FC = () => {
                   onPress={() => setIsExpenseModalOpen(true)}
                 />
                 <AppButton
-                  label="Configurar Rendas"
+                  label="Tributos Anuais"
                   variant="secondary"
                   className="flex-1"
-                  onPress={() => setIsIncomeModalOpen(true)}
+                  onPress={() => setIsTaxesModalOpen(true)}
                 />
               </View>
             </>
@@ -228,6 +230,13 @@ export const HomeScreen: React.FC = () => {
         rendaQ2={cycle?.renda_quinzena_2 || 0}
         onClose={() => setIsIncomeModalOpen(false)}
         onSave={handleSaveIncomes}
+      />
+
+      {/* Modal de Listagem e Gestão de Tributos Anuais */}
+      <TaxesListModal
+        visible={isTaxesModalOpen}
+        userId={user?.uid}
+        onClose={() => setIsTaxesModalOpen(false)}
       />
     </SafeAreaView>
   );
