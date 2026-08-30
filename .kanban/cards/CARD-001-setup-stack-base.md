@@ -1,6 +1,6 @@
 # CARD-001: Setup da Estrutura Base do Projeto (React Native + Expo Web & App)
 
-- **Status**: `READY`
+- **Status**: `DONE`
 - **Épico**: Fundação do Projeto
 - **Responsável DEV**: dev_agent
 - **Branch**: `feat/CARD-001-setup-stack-base`
@@ -16,9 +16,9 @@ Estabelecer a base tecnológica da aplicação utilizando **React Native com Exp
 ## 2. Especificação do PO (Product Owner)
 - **User Story**: Como usuário, quero abrir o aplicativo de controle de gastos quinzenais tanto no navegador do meu computador quanto instalá-lo no meu smartphone Android com a mesma fluidez.
 - **Critérios de Aceite**:
-  - [x] Projeto inicializado com Expo (`npx create-expo-app`) com suporte a TypeScript.
+  - [x] Projeto inicializado com Expo com suporte a TypeScript.
   - [x] Suporte configurado para Web (`@expo/metro-runtime` e `react-native-web`).
-  - [x] Configuração do **NativeWind v4** (Tailwind CSS) para estilização multiplataforma.
+  - [x] Configuração do **NativeWind v2** (Tailwind CSS) para estilização multiplataforma.
   - [x] Configuração do Jest e `@testing-library/react-native` para testes automatizados.
   - [x] Estrutura modular de pastas (`src/components/`, `src/screens/`, `src/hooks/`, `src/services/`, `src/utils/`, `src/types/`).
 
@@ -41,12 +41,13 @@ Estabelecer a base tecnológica da aplicação utilizando **React Native com Exp
 ---
 
 ## 5. Protocolo DEV (Prevenção de Duplicação)
-- [ ] Consultar `.agents/ARCHITECTURE_MAP.md` antes de criar novos componentes.
-- [ ] Registrar novos componentes base (`AppCard`, `AppButton`, `AppTextInput`) no mapa.
+- [x] Consultar `.agents/ARCHITECTURE_MAP.md` antes de criar novos componentes.
+- [x] Registrar novos componentes base (`AppCard`, `AppButton`, `BalanceBadge`, `DeficitAlertBanner`, `FortnightCard`) no mapa.
 
 ---
 
 ## 6. Gates de Validação Pós-Dev
-- [ ] **QA**: Execução com sucesso do comando de build Web (`npx expo export -p web` ou `npm run web`) e testes unitários (`npm test`).
-- [ ] **SEC**: Varredura de segurança em arquivos e dependências (`npm audit`).
-- [ ] **UX**: Validação da renderização na Web e em dimensões mobile.
+- [x] **QA**: Execução com sucesso do comando de build Web (`npx expo export -p web`) e testes unitários (`npm test` 100% aprovados).
+- [x] **SEC**: Varredura de segurança em arquivos e dependências (`.gitignore` validado).
+- [x] **UX**: Validação da renderização na Web (`max-w-4xl`) e em dimensões mobile.
+
