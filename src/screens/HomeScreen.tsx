@@ -104,7 +104,7 @@ export const HomeScreen: React.FC = () => {
   return (
     <SafeAreaView
       className="flex-1 w-full bg-slate-950"
-      style={{ flex: 1, width: '100%', height: '100%', maxHeight: '100vh', overflow: 'hidden' }}
+      style={{ flex: 1, width: '100%', height: '100%', maxHeight: '100%', overflow: 'hidden' }}
     >
       <StatusBar barStyle="light-content" backgroundColor="#0F172A" />
       <ScrollView

@@ -35,7 +35,7 @@
 | `firebaseConfig` | `src/services/firebaseConfig.ts` | Inicialização universal do Firebase (Web + React Native AsyncStorage). |
 | `authService` | `src/services/auth.ts` | Login com Google, E-mail/Senha, Logout e `onAuthStateChanged`. |
 | `monthlyCycleService` | `src/services/monthlyCycle.ts` | CRUD e listeners em tempo real para `users/{userId}/ciclos_mensais/{mesAno}`. |
-| `expenseService` | `src/services/expenses.ts` | CRUD e alternância do status de pagamento com comprovante em `despesas`. |
+| `expenseService` | `src/services/expenses.ts` | CRUD, alternância de pagamento e geração em lote de compras parceladas (`createInstallmentExpenses`). |
 | `taxService` | `src/services/taxes.ts` | CRUD e acompanhamento de tributos em `users/{userId}/tributos_e_parcelas`. |
 
 ---

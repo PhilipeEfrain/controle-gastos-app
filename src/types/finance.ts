@@ -10,6 +10,9 @@ export interface Expense {
   categoria: string;
   recorrente?: boolean;
   data_vencimento?: string;
+  parcela_atual?: number; // Ex: 1
+  total_parcelas?: number; // Ex: 10
+  grupo_parcela_id?: string; // ID único que conecta todas as parcelas da mesma compra
 }
 
 export interface MonthlyCycle {

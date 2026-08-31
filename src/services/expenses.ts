@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
 import { Expense } from '../types/finance';
+import { addMonthsToYearMonth } from '../utils/calculations';
 
 /**
  * Retorna a referência da subcoleção de despesas do ciclo mensal
@@ -38,11 +39,49 @@ export async function createExpense(
     categoria: expense.categoria.trim() || 'Outros',
     recorrente: expense.recorrente ?? false,
     data_vencimento: expense.data_vencimento || '',
+    parcela_atual: expense.parcela_atual || null,
+    total_parcelas: expense.total_parcelas || null,
+    grupo_parcela_id: expense.grupo_parcela_id || null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
 
   return docRef.id;
+}
+
+/**
+ * Cria uma despesa parcelada gerando as parcelas automaticamente para os meses subsequentes
+ */
+export async function createInstallmentExpenses(
+  userId: string,
+  startMesAno: string,
+  expense: Omit<Expense, 'id'>,
+  totalParcelas: number
+): Promise<string> {
+  const grupoParcelaId = `parcela_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  let firstDocId = '';
+
+  for (let i = 0; i < totalParcelas; i++) {
+    const currentMonth = addMonthsToYearMonth(startMesAno, i);
+    const parcelaAtual = i + 1;
+    const isFirst = i === 0;
+
+    const installmentPayload: Omit<Expense, 'id'> = {
+      ...expense,
+      parcela_atual: parcelaAtual,
+      total_parcelas: totalParcelas,
+      grupo_parcela_id: grupoParcelaId,
+      status_pagamento: isFirst ? (expense.status_pagamento ?? false) : false,
+      codigo_comprovante: isFirst ? (expense.codigo_comprovante || '') : '',
+    };
+
+    const docId = await createExpense(userId, currentMonth, installmentPayload);
+    if (isFirst) {
+      firstDocId = docId;
+    }
+  }
+
+  return firstDocId;
 }
 
 /**
@@ -67,6 +106,9 @@ export async function updateExpense(
   if (data.categoria !== undefined) updateData.categoria = data.categoria.trim();
   if (data.recorrente !== undefined) updateData.recorrente = data.recorrente;
   if (data.data_vencimento !== undefined) updateData.data_vencimento = data.data_vencimento;
+  if (data.parcela_atual !== undefined) updateData.parcela_atual = data.parcela_atual;
+  if (data.total_parcelas !== undefined) updateData.total_parcelas = data.total_parcelas;
+  if (data.grupo_parcela_id !== undefined) updateData.grupo_parcela_id = data.grupo_parcela_id;
 
   await updateDoc(docRef, updateData);
 }
@@ -132,6 +174,9 @@ export function subscribeExpenses(
           categoria: data.categoria || 'Outros',
           recorrente: data.recorrente || false,
           data_vencimento: data.data_vencimento || '',
+          parcela_atual: data.parcela_atual || undefined,
+          total_parcelas: data.total_parcelas || undefined,
+          grupo_parcela_id: data.grupo_parcela_id || undefined,
         };
       });
       callback(expenses);

@@ -1,4 +1,4 @@
-import { calculateFortnightBalance, calculateGlobalBalance, sumExpenses } from './calculations';
+import { calculateFortnightBalance, calculateGlobalBalance, sumExpenses, addMonthsToYearMonth } from './calculations';
 import { Expense } from '../types/finance';
 
 describe('Motor Financeiro Quinzenal (Entendimento.md)', () => {
@@ -44,5 +44,17 @@ describe('Motor Financeiro Quinzenal (Entendimento.md)', () => {
     expect(summary.q2.isDeficit).toBe(true);
     // O superávit de Q1 (+529.32) não cobre o déficit de Q2 (-793.93)
     expect(summary.q1CobreQ2).toBe(false);
+  });
+
+  describe('addMonthsToYearMonth', () => {
+    it('deve avançar meses dentro do mesmo ano', () => {
+      expect(addMonthsToYearMonth('2025-03', 1)).toBe('2025-04');
+      expect(addMonthsToYearMonth('2025-03', 5)).toBe('2025-08');
+    });
+
+    it('deve avançar meses com virada de ano', () => {
+      expect(addMonthsToYearMonth('2025-11', 2)).toBe('2026-01');
+      expect(addMonthsToYearMonth('2025-03', 12)).toBe('2026-03');
+    });
   });
 });
