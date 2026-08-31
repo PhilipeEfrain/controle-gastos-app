@@ -15,7 +15,7 @@ import { AppButton } from '../components/ui/AppButton';
 import { useAuth } from '../hooks/useAuth';
 
 export const AuthScreen: React.FC = () => {
-  const { login, register } = useAuth();
+  const { login, register, loginGoogle } = useAuth();
 
   const [isRegisterMode, setIsRegisterMode] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
@@ -24,6 +24,7 @@ export const AuthScreen: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async () => {
@@ -60,6 +61,18 @@ export const AuthScreen: React.FC = () => {
       setErrorMessage(err.message || 'Erro ao realizar autenticação.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    setErrorMessage(null);
+    setIsGoogleLoading(true);
+    try {
+      await loginGoogle();
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Falha ao autenticar com o Google.');
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -213,18 +226,50 @@ export const AuthScreen: React.FC = () => {
                   </View>
                 )}
 
-                {/* Botão de Envio */}
+                {/* Botão de Envio com Email/Senha */}
                 <AppButton
                   label={
                     isLoading ? '' : isRegisterMode ? 'Cadastrar Minha Conta' : 'Acessar Meu Painel'
                   }
                   variant="primary"
                   onPress={handleSubmit}
-                  disabled={isLoading}
+                  disabled={isLoading || isGoogleLoading}
                   className="mt-2"
                 >
                   {isLoading && <ActivityIndicator color="#FFFFFF" size="small" />}
                 </AppButton>
+
+                {/* Divisor Visual */}
+                <View className="flex-row items-center my-4">
+                  <View className="flex-1 h-[1px] bg-slate-800" />
+                  <Text className="text-slate-500 text-xs font-semibold px-3 uppercase tracking-wider">
+                    ou
+                  </Text>
+                  <View className="flex-1 h-[1px] bg-slate-800" />
+                </View>
+
+                {/* Botão Google Sign-In */}
+                <Pressable
+                  onPress={handleGoogleAuth}
+                  disabled={isLoading || isGoogleLoading}
+                  className="flex-row items-center justify-center bg-slate-950 hover:bg-slate-800/90 active:bg-slate-800 border border-slate-700/90 py-3 px-4 rounded-xl cursor-pointer transition-all active:scale-[0.98] shadow-sm"
+                >
+                  {isGoogleLoading ? (
+                    <ActivityIndicator color="#10B981" size="small" />
+                  ) : (
+                    <>
+                      {/* Ícone estilizado do Google */}
+                      <View className="w-5 h-5 rounded-full bg-white items-center justify-center mr-3 shadow-xs">
+                        <Text className="text-[13px] font-bold text-slate-900 leading-none">
+                          G
+                        </Text>
+                      </View>
+                      <Text className="text-slate-100 font-semibold text-base">
+                        {isRegisterMode ? 'Cadastrar com o Google' : 'Continuar com o Google'}
+                      </Text>
+                    </>
+                  )}
+                </Pressable>
               </View>
             </AppCard>
 

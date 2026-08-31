@@ -1,12 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { UserProfile } from '../types/user';
-import { subscribeAuthState, loginWithEmail, registerWithEmail, logoutUser, formatAuthError } from '../services/auth';
+import {
+  subscribeAuthState,
+  loginWithEmail,
+  registerWithEmail,
+  loginWithGoogle,
+  logoutUser,
+  formatAuthError,
+} from '../services/auth';
 
 interface AuthContextData {
   user: UserProfile | null;
   loading: boolean;
   login: (email: string, pass: string) => Promise<void>;
   register: (email: string, pass: string, name: string) => Promise<void>;
+  loginGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -41,12 +49,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginGoogle = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (err: any) {
+      throw new Error(formatAuthError(err.code || err.message));
+    }
+  };
+
   const logout = async () => {
     await logoutUser();
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, loginGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );
