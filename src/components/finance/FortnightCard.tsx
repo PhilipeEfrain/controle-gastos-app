@@ -11,6 +11,7 @@ interface FortnightCardProps {
   expenses?: Expense[];
   onTogglePayment?: (expense: Expense) => void;
   onEditReceipt?: (expense: Expense) => void;
+  onEditExpense?: (expense: Expense) => void;
   onDeleteExpense?: (expense: Expense) => void;
 }
 
@@ -19,6 +20,7 @@ export const FortnightCard: React.FC<FortnightCardProps> = ({
   expenses = [],
   onTogglePayment,
   onEditReceipt,
+  onEditExpense,
   onDeleteExpense,
 }) => {
   const isDeficit = summary.saldo < 0;
@@ -73,6 +75,7 @@ export const FortnightCard: React.FC<FortnightCardProps> = ({
               expense={exp}
               onTogglePayment={onTogglePayment || (() => {})}
               onEditReceipt={onEditReceipt}
+              onEdit={onEditExpense}
               onDelete={onDeleteExpense}
             />
           ))
