@@ -82,9 +82,17 @@ export const HomeScreen: React.FC = () => {
   return (
     <SafeAreaView className="flex-1 bg-slate-950">
       <StatusBar barStyle="light-content" backgroundColor="#0F172A" />
-      <ScrollView className="flex-1 px-4 py-6" contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          paddingBottom: 40,
+          paddingTop: 24,
+          paddingHorizontal: 16,
+          alignItems: 'center',
+        }}
+      >
         {/* Container centralizado para Web */}
-        <View className="max-w-4xl w-full self-center">
+        <View className="max-w-4xl w-full">
           {/* Header Superior com Perfil e Logout */}
           <View className="flex-row justify-between items-center mb-6 pb-4 border-b border-slate-800">
             <View className="flex-row items-center space-x-3">

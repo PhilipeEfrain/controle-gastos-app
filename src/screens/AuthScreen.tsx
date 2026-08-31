@@ -64,17 +64,26 @@ export const AuthScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
+    <SafeAreaView className="flex-1 w-full bg-slate-950" style={{ flex: 1, width: '100%' }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
+        className="flex-1 w-full"
+        style={{ flex: 1, width: '100%' }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
-          className="px-4 py-8"
+          className="flex-1 w-full"
+          style={{ flex: 1, width: '100%' }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 32,
+            paddingHorizontal: 16,
+          }}
           keyboardShouldPersistTaps="handled"
         >
-          <View className="max-w-md w-full self-center">
+          <View className="max-w-md w-full" style={{ width: '100%', maxWidth: 448 }}>
             {/* Header / Logo */}
             <View className="items-center mb-8">
               <View className="w-16 h-16 bg-emerald-600/20 border border-emerald-500/30 rounded-2xl items-center justify-center mb-3 shadow-lg shadow-emerald-900/40">
