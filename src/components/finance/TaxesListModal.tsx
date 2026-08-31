@@ -27,7 +27,7 @@ export const TaxesListModal: React.FC<TaxesListModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-black/75 justify-center items-center px-4 py-8">
+      <View className="flex-1 bg-slate-950/80 backdrop-blur-md justify-center items-center px-4 py-8">
         <View className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl flex-1 max-h-[92%]">
           {/* Header */}
           <View className="flex-row justify-between items-center mb-4 pb-3 border-b border-slate-800">

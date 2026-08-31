@@ -89,16 +89,16 @@ export const AuthScreen: React.FC = () => {
             </View>
 
             {/* Card Principal */}
-            <AppCard className="bg-slate-900 border-slate-800">
+            <AppCard className="bg-slate-900 border-slate-800 shadow-2xl">
               {/* Abas Alternáveis */}
-              <View className="flex-row bg-slate-950/60 p-1 rounded-xl mb-6 border border-slate-800">
+              <View className="flex-row bg-slate-950/80 p-1.5 rounded-xl mb-6 border border-slate-800">
                 <Pressable
                   onPress={() => {
                     setIsRegisterMode(false);
                     setErrorMessage(null);
                   }}
-                  className={`flex-1 py-2.5 rounded-lg items-center ${
-                    !isRegisterMode ? 'bg-slate-800 shadow-sm' : ''
+                  className={`flex-1 py-2.5 rounded-lg items-center cursor-pointer transition-all ${
+                    !isRegisterMode ? 'bg-slate-800 shadow-sm' : 'hover:bg-slate-900/50'
                   }`}
                 >
                   <Text
@@ -115,8 +115,8 @@ export const AuthScreen: React.FC = () => {
                     setIsRegisterMode(true);
                     setErrorMessage(null);
                   }}
-                  className={`flex-1 py-2.5 rounded-lg items-center ${
-                    isRegisterMode ? 'bg-slate-800 shadow-sm' : ''
+                  className={`flex-1 py-2.5 rounded-lg items-center cursor-pointer transition-all ${
+                    isRegisterMode ? 'bg-slate-800 shadow-sm' : 'hover:bg-slate-900/50'
                   }`}
                 >
                   <Text
@@ -131,7 +131,7 @@ export const AuthScreen: React.FC = () => {
 
               {/* Mensagem de Erro */}
               {errorMessage && (
-                <View className="bg-red-950/60 border border-red-800/80 rounded-xl p-3.5 mb-5 flex-row items-center">
+                <View className="bg-red-950/70 border border-red-800/80 rounded-xl p-3.5 mb-5 flex-row items-center">
                   <Text className="text-red-400 text-sm flex-1 leading-tight font-medium">
                     ⚠️ {errorMessage}
                   </Text>
@@ -151,7 +151,7 @@ export const AuthScreen: React.FC = () => {
                       value={name}
                       onChangeText={setName}
                       autoCapitalize="words"
-                      className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 text-base"
+                      className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-base"
                     />
                   </View>
                 )}
@@ -168,7 +168,7 @@ export const AuthScreen: React.FC = () => {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
-                    className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 text-base"
+                    className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-base"
                   />
                 </View>
 
@@ -183,7 +183,7 @@ export const AuthScreen: React.FC = () => {
                     onChangeText={setPassword}
                     secureTextEntry
                     autoCapitalize="none"
-                    className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 text-base"
+                    className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-base"
                   />
                 </View>
 
@@ -199,7 +199,7 @@ export const AuthScreen: React.FC = () => {
                       onChangeText={setConfirmPassword}
                       secureTextEntry
                       autoCapitalize="none"
-                      className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 text-base"
+                      className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-base"
                     />
                   </View>
                 )}

@@ -35,8 +35,8 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View className="flex-1 bg-black/70 justify-center items-center px-4">
-        <View className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+      <View className="flex-1 bg-slate-950/80 backdrop-blur-md justify-center items-center px-4">
+        <View className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl">
           <Text className="text-white font-bold text-lg mb-1">
             Código do Comprovante
           </Text>

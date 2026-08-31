@@ -63,7 +63,7 @@ export const TaxFormModal: React.FC<TaxFormModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-black/70 justify-center items-center px-4">
+      <View className="flex-1 bg-slate-950/80 backdrop-blur-md justify-center items-center px-4">
         <View className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl">
           <Text className="text-white font-bold text-xl mb-1">Novo Tributo / Imposto</Text>
           <Text className="text-slate-400 text-xs mb-4">

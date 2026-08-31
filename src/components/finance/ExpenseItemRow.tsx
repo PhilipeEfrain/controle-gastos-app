@@ -35,7 +35,7 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
       className={`p-3.5 rounded-xl mb-2.5 border transition-all flex-row items-center justify-between ${
         isPaid
           ? 'bg-slate-900/50 border-slate-800/80 opacity-75'
-          : 'bg-slate-900 border-slate-700/80 shadow-sm'
+          : 'bg-slate-900 border-slate-700/80 shadow-sm hover:border-slate-600'
       }`}
     >
       {/* Checkbox e Detalhes da Despesa */}
@@ -44,10 +44,10 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
         <Pressable
           onPress={() => onTogglePayment(expense)}
           hitSlop={8}
-          className={`w-6 h-6 rounded-lg items-center justify-center border mr-3 ${
+          className={`w-6 h-6 rounded-lg items-center justify-center border mr-3 cursor-pointer active:scale-95 transition-all ${
             isPaid
-              ? 'bg-emerald-600 border-emerald-500'
-              : 'bg-slate-950 border-slate-600 active:border-emerald-500'
+              ? 'bg-emerald-600 border-emerald-500 shadow-sm shadow-emerald-900'
+              : 'bg-slate-950 border-slate-600 hover:border-emerald-500'
           }`}
         >
           {isPaid && <Text className="text-white text-xs font-bold">✓</Text>}
@@ -83,7 +83,7 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
           {expense.codigo_comprovante ? (
             <Pressable
               onPress={() => onEditReceipt && onEditReceipt(expense)}
-              className="flex-row items-center self-start bg-slate-950 px-2 py-0.5 rounded border border-slate-800 mt-0.5"
+              className="flex-row items-center self-start bg-slate-950 px-2 py-0.5 rounded border border-slate-800 mt-0.5 cursor-pointer hover:border-emerald-500/50"
             >
               <Text className="text-[11px] text-slate-400">
                 Comprovante: <Text className="text-emerald-400 font-mono font-bold">{expense.codigo_comprovante}</Text>
@@ -92,9 +92,9 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
           ) : isPaid ? (
             <Pressable
               onPress={() => onEditReceipt && onEditReceipt(expense)}
-              className="self-start mt-0.5"
+              className="self-start mt-0.5 cursor-pointer"
             >
-              <Text className="text-[11px] text-slate-500 italic underline">+ Add comprovante</Text>
+              <Text className="text-[11px] text-slate-500 italic underline hover:text-emerald-400">+ Add comprovante</Text>
             </Pressable>
           ) : null}
         </View>
@@ -114,7 +114,7 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
           <Pressable
             onPress={() => onDelete(expense)}
             hitSlop={8}
-            className="mt-1 px-1.5 py-0.5"
+            className="mt-1 px-1.5 py-0.5 cursor-pointer"
           >
             <Text className="text-slate-500 hover:text-red-400 text-xs">Excluir</Text>
           </Pressable>

@@ -104,7 +104,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View className="flex-1 bg-black/70 justify-center items-center px-4 py-8">
+      <View className="flex-1 bg-slate-950/80 backdrop-blur-md justify-center items-center px-4 py-8">
         <View className="max-w-lg w-full bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl max-h-[90%]">
           <Text className="text-white font-bold text-xl mb-1">
             {expenseToEdit ? 'Editar Despesa' : 'Nova Despesa'}
