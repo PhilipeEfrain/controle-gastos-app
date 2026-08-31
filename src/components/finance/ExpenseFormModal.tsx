@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { AppButton } from '../ui/AppButton';
 import { Expense, FortnightNumber } from '../../types/finance';
-import { parseBRL, formatBRL } from '../../utils/formatters';
+import { formatBRL } from '../../utils/formatters';
 
 interface ExpenseFormModalProps {
   visible: boolean;
@@ -46,6 +46,11 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
   const [recorrente, setRecorrente] = useState<boolean>(false);
   const [dataVencimento, setDataVencimento] = useState<string>('');
 
+  // Estados de Parcelamento
+  const [isParcelado, setIsParcelado] = useState<boolean>(false);
+  const [totalParcelas, setTotalParcelas] = useState<string>('2');
+  const [isValorTotal, setIsValorTotal] = useState<boolean>(true); // Se true, divide o valor pelas parcelas
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -57,6 +62,9 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
       setCategoria(expenseToEdit.categoria || 'Moradia');
       setRecorrente(expenseToEdit.recorrente || false);
       setDataVencimento(expenseToEdit.data_vencimento || '');
+      setIsParcelado(!!(expenseToEdit.total_parcelas && expenseToEdit.total_parcelas > 1));
+      setTotalParcelas(expenseToEdit.total_parcelas ? expenseToEdit.total_parcelas.toString() : '2');
+      setIsValorTotal(false); // Na edição, o valor exibido já é o da parcela atual
     } else {
       setDescricao('');
       setValorText('');
@@ -64,9 +72,28 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
       setCategoria('Moradia');
       setRecorrente(false);
       setDataVencimento('');
+      setIsParcelado(false);
+      setTotalParcelas('2');
+      setIsValorTotal(true);
     }
     setErrorMessage(null);
   }, [expenseToEdit, visible, defaultFortnight]);
+
+  // Cálculos de resumo de parcelamento
+  const parsedValor = parseFloat(valorText.replace(',', '.')) || 0;
+  const parsedParcelas = parseInt(totalParcelas, 10) || 1;
+
+  const valorPorParcela = isParcelado
+    ? isValorTotal
+      ? parsedValor / Math.max(1, parsedParcelas)
+      : parsedValor
+    : parsedValor;
+
+  const valorTotalCompra = isParcelado
+    ? isValorTotal
+      ? parsedValor
+      : parsedValor * parsedParcelas
+    : parsedValor;
 
   const handleSubmit = async () => {
     setErrorMessage(null);
@@ -76,9 +103,13 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
       return;
     }
 
-    const numericValue = parseFloat(valorText.replace(',', '.'));
-    if (isNaN(numericValue) || numericValue <= 0) {
+    if (parsedValor <= 0) {
       setErrorMessage('Por favor, informe um valor válido maior que zero.');
+      return;
+    }
+
+    if (isParcelado && (parsedParcelas < 2 || isNaN(parsedParcelas))) {
+      setErrorMessage('Para despesas parceladas, informe no mínimo 2 parcelas.');
       return;
     }
 
@@ -86,13 +117,16 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
     try {
       await onSave({
         descricao: descricao.trim(),
-        valor: numericValue,
+        valor: Number(valorPorParcela.toFixed(2)),
         quinzena,
         categoria,
-        recorrente,
+        recorrente: isParcelado ? false : recorrente,
         status_pagamento: expenseToEdit?.status_pagamento || false,
         codigo_comprovante: expenseToEdit?.codigo_comprovante || '',
         data_vencimento: dataVencimento.trim() || undefined,
+        parcela_atual: isParcelado ? (expenseToEdit?.parcela_atual || 1) : undefined,
+        total_parcelas: isParcelado ? parsedParcelas : undefined,
+        grupo_parcela_id: expenseToEdit?.grupo_parcela_id,
       });
       onClose();
     } catch (err: any) {
@@ -126,7 +160,7 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
                 Descrição da Conta
               </Text>
               <TextInput
-                placeholder="Ex: Energia Solar, Cartão, Aluguel"
+                placeholder="Ex: Energia Solar, Cartão, Geladeira"
                 placeholderTextColor="#64748B"
                 value={descricao}
                 onChangeText={setDescricao}
@@ -137,33 +171,82 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
             {/* Valor */}
             <View className="mb-4">
               <Text className="text-slate-300 text-xs font-semibold uppercase mb-1.5 ml-1">
-                Valor (R$)
+                {isParcelado && isValorTotal ? 'Valor Total da Compra (R$)' : 'Valor da Parcela / Conta (R$)'}
               </Text>
               <TextInput
-                placeholder="Ex: 859.19"
+                placeholder="0,00"
                 placeholderTextColor="#64748B"
                 value={valorText}
                 onChangeText={setValorText}
-                keyboardType="numeric"
-                className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 text-base font-semibold"
+                keyboardType="decimal-pad"
+                className="bg-slate-950 text-white px-4 py-3 rounded-xl border border-slate-800 focus:border-emerald-500 text-lg font-bold text-emerald-400"
               />
             </View>
 
-            {/* Quinzena */}
+            {/* Seção de Parcelamento */}
+            {!expenseToEdit && (
+              <View className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 mb-4">
+                <View className="flex-row justify-between items-center">
+                  <View>
+                    <Text className="text-slate-200 font-semibold text-sm">📦 Compra Parcelada?</Text>
+                    <Text className="text-slate-400 text-xs mt-0.5">
+                      Gera e propaga as parcelas nos meses seguintes
+                    </Text>
+                  </View>
+                  <Switch
+                    value={isParcelado}
+                    onValueChange={setIsParcelado}
+                    trackColor={{ false: '#334155', true: '#10B981' }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
+
+                {isParcelado && (
+                  <View className="mt-3 pt-3 border-t border-slate-800 space-y-3">
+                    <View className="flex-row items-center justify-between">
+                      <Text className="text-slate-300 text-xs font-medium">Quantidade de Parcelas:</Text>
+                      <TextInput
+                        placeholder="Ex: 6"
+                        placeholderTextColor="#64748B"
+                        value={totalParcelas}
+                        onChangeText={setTotalParcelas}
+                        keyboardType="number-pad"
+                        className="bg-slate-900 text-white px-3 py-1.5 rounded-lg border border-slate-700 w-24 text-center font-bold text-base text-purple-300"
+                      />
+                    </View>
+
+                    {parsedValor > 0 && parsedParcelas > 1 && (
+                      <View className="bg-purple-950/40 p-2.5 rounded-lg border border-purple-800/60 mt-2">
+                        <Text className="text-purple-300 text-xs font-semibold">
+                          Resumo: <Text className="font-extrabold">{parsedParcelas}x de {formatBRL(valorPorParcela)}</Text>
+                        </Text>
+                        <Text className="text-slate-400 text-[11px] mt-0.5">
+                          Total acumulado: {formatBRL(valorTotalCompra)}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                )}
+              </View>
+            )}
+
+            {/* Quinzena de Lançamento */}
             <View className="mb-4">
               <Text className="text-slate-300 text-xs font-semibold uppercase mb-1.5 ml-1">
-                Quinzena do Pagamento
+                Quinzena de Vencimento
               </Text>
-              <View className="flex-row bg-slate-950 p-1 rounded-xl border border-slate-800">
+              <View className="flex-row space-x-3">
                 <Pressable
                   onPress={() => setQuinzena(1)}
-                  className={`flex-1 py-2.5 rounded-lg items-center ${
-                    quinzena === 1 ? 'bg-emerald-600 shadow' : ''
+                  className={`flex-1 py-2.5 rounded-xl items-center border mr-2 cursor-pointer ${
+                    quinzena === 1
+                      ? 'bg-emerald-950/80 border-emerald-500'
+                      : 'bg-slate-950 border-slate-800'
                   }`}
                 >
                   <Text
-                    className={`font-semibold text-xs ${
-                      quinzena === 1 ? 'text-white' : 'text-slate-400'
+                    className={`font-semibold text-sm ${
+                      quinzena === 1 ? 'text-emerald-400' : 'text-slate-400'
                     }`}
                   >
                     1ª Quinzena (Dia 31)
@@ -172,13 +255,15 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
 
                 <Pressable
                   onPress={() => setQuinzena(2)}
-                  className={`flex-1 py-2.5 rounded-lg items-center ${
-                    quinzena === 2 ? 'bg-emerald-600 shadow' : ''
+                  className={`flex-1 py-2.5 rounded-xl items-center border cursor-pointer ${
+                    quinzena === 2
+                      ? 'bg-emerald-950/80 border-emerald-500'
+                      : 'bg-slate-950 border-slate-800'
                   }`}
                 >
                   <Text
-                    className={`font-semibold text-xs ${
-                      quinzena === 2 ? 'text-white' : 'text-slate-400'
+                    className={`font-semibold text-sm ${
+                      quinzena === 2 ? 'text-emerald-400' : 'text-slate-400'
                     }`}
                   >
                     2ª Quinzena (Dia 15)
@@ -199,15 +284,15 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
                     <Pressable
                       key={cat}
                       onPress={() => setCategoria(cat)}
-                      className={`px-3 py-1.5 rounded-lg border ${
+                      className={`px-3 py-1.5 rounded-lg border cursor-pointer ${
                         isSelected
-                          ? 'bg-emerald-950 border-emerald-500 text-emerald-300'
+                          ? 'bg-emerald-600 border-emerald-500'
                           : 'bg-slate-950 border-slate-800'
                       }`}
                     >
                       <Text
                         className={`text-xs font-medium ${
-                          isSelected ? 'text-emerald-400 font-bold' : 'text-slate-400'
+                          isSelected ? 'text-white font-bold' : 'text-slate-400'
                         }`}
                       >
                         {cat}
@@ -218,40 +303,44 @@ export const ExpenseFormModal: React.FC<ExpenseFormModalProps> = ({
               </View>
             </View>
 
-            {/* Recorrente Switch */}
-            <View className="flex-row items-center justify-between bg-slate-950 p-3.5 rounded-xl border border-slate-800 mb-6">
-              <View>
-                <Text className="text-slate-200 text-sm font-semibold">Despesa Recorrente</Text>
-                <Text className="text-slate-500 text-xs">Repetir automaticamente nos próximos meses</Text>
+            {/* Switch de Despesa Recorrente */}
+            {!isParcelado && (
+              <View className="flex-row justify-between items-center py-3 px-1 mb-4 border-t border-b border-slate-800">
+                <View>
+                  <Text className="text-slate-200 font-semibold text-sm">Despesa Recorrente?</Text>
+                  <Text className="text-slate-400 text-xs">
+                    Conta fixa que se repete mensalmente
+                  </Text>
+                </View>
+                <Switch
+                  value={recorrente}
+                  onValueChange={setRecorrente}
+                  trackColor={{ false: '#334155', true: '#10B981' }}
+                  thumbColor="#FFFFFF"
+                />
               </View>
-              <Switch
-                value={recorrente}
-                onValueChange={setRecorrente}
-                trackColor={{ false: '#334155', true: '#059669' }}
-                thumbColor={recorrente ? '#10B981' : '#94A3B8'}
+            )}
+
+            {/* Ações */}
+            <View className="flex-row space-x-3 mt-4">
+              <AppButton
+                label="Cancelar"
+                variant="outline"
+                className="flex-1 mr-2"
+                onPress={onClose}
+                disabled={isLoading}
               />
+              <AppButton
+                label={isLoading ? '' : expenseToEdit ? 'Salvar Alterações' : 'Adicionar Despesa'}
+                variant="primary"
+                className="flex-1"
+                onPress={handleSubmit}
+                disabled={isLoading}
+              >
+                {isLoading && <ActivityIndicator color="#FFFFFF" size="small" />}
+              </AppButton>
             </View>
           </ScrollView>
-
-          {/* Botões de Ação */}
-          <View className="flex-row space-x-3 pt-2">
-            <AppButton
-              label="Cancelar"
-              variant="outline"
-              className="flex-1 mr-2"
-              onPress={onClose}
-              disabled={isLoading}
-            />
-            <AppButton
-              label={isLoading ? '' : 'Salvar Despesa'}
-              variant="primary"
-              className="flex-1"
-              onPress={handleSubmit}
-              disabled={isLoading}
-            >
-              {isLoading && <ActivityIndicator color="#FFFFFF" size="small" />}
-            </AppButton>
-          </View>
         </View>
       </View>
     </Modal>

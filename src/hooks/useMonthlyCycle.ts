@@ -4,6 +4,7 @@ import { subscribeMonthlyCycle, updateCycleIncomes, saveMonthlyCycle } from '../
 import {
   subscribeExpenses,
   createExpense,
+  createInstallmentExpenses,
   updateExpense,
   deleteExpense,
   toggleExpensePayment,
@@ -80,6 +81,16 @@ export function useMonthlyCycle(userId: string | undefined, mesAno: string): Use
   const addNewExpense = useCallback(
     async (expense: Omit<Expense, 'id'>) => {
       if (!userId || !mesAno) throw new Error('Usuário não autenticado.');
+
+      if (expense.total_parcelas && expense.total_parcelas > 1) {
+        return await createInstallmentExpenses(
+          userId,
+          mesAno,
+          expense,
+          expense.total_parcelas
+        );
+      }
+
       return await createExpense(userId, mesAno, expense);
     },
     [userId, mesAno]

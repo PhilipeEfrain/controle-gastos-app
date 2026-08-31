@@ -31,6 +31,7 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
 }) => {
   const isPaid = expense.status_pagamento;
   const categoryStyle = CATEGORY_COLORS[expense.categoria] || CATEGORY_COLORS['Outros'];
+  const isInstallment = !!(expense.total_parcelas && expense.total_parcelas > 1);
 
   return (
     <View
@@ -73,8 +74,17 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
               </Text>
             </View>
 
+            {/* Badge de Parcela (ex: 📦 1/10) */}
+            {isInstallment && (
+              <View className="px-2 py-0.5 rounded-md bg-purple-950/90 border border-purple-600/70 shadow-xs">
+                <Text className="text-[10px] text-purple-300 font-extrabold font-mono">
+                  📦 {expense.parcela_atual || 1}/{expense.total_parcelas}
+                </Text>
+              </View>
+            )}
+
             {/* Badge de Recorrente */}
-            {expense.recorrente && (
+            {expense.recorrente && !isInstallment && (
               <View className="px-1.5 py-0.5 rounded-md bg-slate-800 border border-slate-700">
                 <Text className="text-[10px] text-slate-400 font-medium">🔁 Recorrente</Text>
               </View>

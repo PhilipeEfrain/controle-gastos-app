@@ -23,6 +23,23 @@ export const calculateFortnightBalance = (income: number, expenses: Expense[]): 
 };
 
 /**
+ * Avança N meses a partir de uma data no formato 'YYYY-MM'.
+ */
+export const addMonthsToYearMonth = (yearMonth: string, count: number): string => {
+  const [yearStr, monthStr] = yearMonth.split('-');
+  let year = parseInt(yearStr, 10);
+  let month = parseInt(monthStr, 10) - 1; // 0-indexed
+
+  month += count;
+  year += Math.floor(month / 12);
+  month = ((month % 12) + 12) % 12;
+
+  const newYear = year.toString();
+  const newMonth = (month + 1).toString().padStart(2, '0');
+  return `${newYear}-${newMonth}`;
+};
+
+/**
  * Calcula balanço global do mês com suporte à análise de cobertura de déficit.
  */
 export const calculateGlobalBalance = (
