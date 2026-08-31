@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
   ScrollView,
   SafeAreaView,
-  useWindowDimensions,
   StatusBar,
-  Pressable,
   ActivityIndicator,
+  Pressable,
+  useWindowDimensions,
 } from 'react-native';
+import { useAuth } from '../hooks/useAuth';
+import { useMonthlyCycle } from '../hooks/useMonthlyCycle';
 import { AppCard } from '../components/ui/AppCard';
 import { AppButton } from '../components/ui/AppButton';
 import { BalanceBadge } from '../components/ui/BalanceBadge';
@@ -18,18 +20,17 @@ import { ReceiptModal } from '../components/finance/ReceiptModal';
 import { ExpenseFormModal } from '../components/finance/ExpenseFormModal';
 import { IncomeFormModal } from '../components/finance/IncomeFormModal';
 import { TaxesListModal } from '../components/finance/TaxesListModal';
+import { Expense } from '../types/finance';
 import { formatBRL } from '../utils/formatters';
-import { Expense, FortnightNumber } from '../types/finance';
-import { useAuth } from '../hooks/useAuth';
-import { useMonthlyCycle } from '../hooks/useMonthlyCycle';
 
 export const HomeScreen: React.FC = () => {
-  const { width } = useWindowDimensions();
-  const isWebWide = width >= 768; // Breakpoint para layout em colunas na Web
   const { user, logout } = useAuth();
+  const { width } = useWindowDimensions();
+  const isWebWide = width > 768;
 
-  // Mês corrente padrão
-  const currentMonthYear = '2025-03';
+  // Ciclo fixo/atual (Ex: 2025-03)
+  const currentCycleId = '2025-03';
+
   const {
     cycle,
     expenses,
@@ -37,18 +38,24 @@ export const HomeScreen: React.FC = () => {
     loading,
     saveIncomes,
     addNewExpense,
-    togglePayment,
+    modifyExpense,
     removeExpense,
-  } = useMonthlyCycle(user?.uid, currentMonthYear);
+    togglePayment,
+  } = useMonthlyCycle(user?.uid, currentCycleId);
 
-  // Modais de Controle
+  // Estados de controle dos Modais
   const [selectedExpenseForReceipt, setSelectedExpenseForReceipt] = useState<Expense | null>(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState<boolean>(false);
+
+  const [selectedExpenseForEdit, setSelectedExpenseForEdit] = useState<Expense | null>(null);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState<boolean>(false);
+
   const [isIncomeModalOpen, setIsIncomeModalOpen] = useState<boolean>(false);
   const [isTaxesModalOpen, setIsTaxesModalOpen] = useState<boolean>(false);
 
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Usuário';
+  const displayName = useMemo(() => {
+    return user?.displayName || user?.email?.split('@')[0] || 'Usuário';
+  }, [user]);
 
   const handleTogglePayment = async (expense: Expense) => {
     if (expense.id) {
@@ -61,6 +68,16 @@ export const HomeScreen: React.FC = () => {
     setIsReceiptModalOpen(true);
   };
 
+  const handleOpenEditExpenseModal = (expense: Expense) => {
+    setSelectedExpenseForEdit(expense);
+    setIsExpenseModalOpen(true);
+  };
+
+  const handleOpenNewExpenseModal = () => {
+    setSelectedExpenseForEdit(null);
+    setIsExpenseModalOpen(true);
+  };
+
   const handleSaveReceipt = async (expenseId: string, receiptCode: string) => {
     await togglePayment(expenseId, true, receiptCode);
   };
@@ -71,8 +88,13 @@ export const HomeScreen: React.FC = () => {
     }
   };
 
-  const handleSaveNewExpense = async (expenseData: Omit<Expense, 'id'>) => {
-    await addNewExpense(expenseData);
+  const handleSaveExpense = async (expenseData: Omit<Expense, 'id'>) => {
+    if (selectedExpenseForEdit && selectedExpenseForEdit.id) {
+      await modifyExpense(selectedExpenseForEdit.id, expenseData);
+    } else {
+      await addNewExpense(expenseData);
+    }
+    setSelectedExpenseForEdit(null);
   };
 
   const handleSaveIncomes = async (q1: number, q2: number) => {
@@ -109,7 +131,7 @@ export const HomeScreen: React.FC = () => {
 
             <Pressable
               onPress={logout}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 active:bg-slate-700"
+              className="px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 active:bg-slate-700 cursor-pointer"
             >
               <Text className="text-slate-300 text-xs font-semibold">Sair</Text>
             </Pressable>
@@ -145,7 +167,7 @@ export const HomeScreen: React.FC = () => {
                   </Text>
                   <Pressable
                     onPress={() => setIsIncomeModalOpen(true)}
-                    className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 active:bg-slate-700"
+                    className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 active:bg-slate-700 cursor-pointer"
                   >
                     <Text className="text-emerald-400 text-xs font-semibold">
                       ⚙️ Ajustar Rendas
@@ -185,6 +207,7 @@ export const HomeScreen: React.FC = () => {
                   expenses={expenses}
                   onTogglePayment={handleTogglePayment}
                   onEditReceipt={handleOpenReceiptModal}
+                  onEditExpense={handleOpenEditExpenseModal}
                   onDeleteExpense={handleDeleteExpense}
                 />
                 <FortnightCard
@@ -192,6 +215,7 @@ export const HomeScreen: React.FC = () => {
                   expenses={expenses}
                   onTogglePayment={handleTogglePayment}
                   onEditReceipt={handleOpenReceiptModal}
+                  onEditExpense={handleOpenEditExpenseModal}
                   onDeleteExpense={handleDeleteExpense}
                 />
               </View>
@@ -202,7 +226,7 @@ export const HomeScreen: React.FC = () => {
                   label="+ Nova Despesa"
                   variant="primary"
                   className="flex-1 mr-2"
-                  onPress={() => setIsExpenseModalOpen(true)}
+                  onPress={handleOpenNewExpenseModal}
                 />
                 <AppButton
                   label="Tributos Anuais"
@@ -224,11 +248,15 @@ export const HomeScreen: React.FC = () => {
         onSave={handleSaveReceipt}
       />
 
-      {/* Modal de Cadastro de Despesa */}
+      {/* Modal de Cadastro/Edição de Despesa */}
       <ExpenseFormModal
         visible={isExpenseModalOpen}
-        onClose={() => setIsExpenseModalOpen(false)}
-        onSave={handleSaveNewExpense}
+        expenseToEdit={selectedExpenseForEdit}
+        onClose={() => {
+          setIsExpenseModalOpen(false);
+          setSelectedExpenseForEdit(null);
+        }}
+        onSave={handleSaveExpense}
       />
 
       {/* Modal de Configuração de Rendas */}

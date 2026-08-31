@@ -7,6 +7,7 @@ interface ExpenseItemRowProps {
   expense: Expense;
   onTogglePayment: (expense: Expense) => void;
   onEditReceipt?: (expense: Expense) => void;
+  onEdit?: (expense: Expense) => void;
   onDelete?: (expense: Expense) => void;
 }
 
@@ -25,6 +26,7 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
   expense,
   onTogglePayment,
   onEditReceipt,
+  onEdit,
   onDelete,
 }) => {
   const isPaid = expense.status_pagamento;
@@ -110,15 +112,27 @@ export const ExpenseItemRow: React.FC<ExpenseItemRowProps> = ({
           {formatBRL(expense.valor)}
         </Text>
 
-        {onDelete && (
-          <Pressable
-            onPress={() => onDelete(expense)}
-            hitSlop={8}
-            className="mt-1 px-1.5 py-0.5 cursor-pointer"
-          >
-            <Text className="text-slate-500 hover:text-red-400 text-xs">Excluir</Text>
-          </Pressable>
-        )}
+        <View className="flex-row items-center gap-2 mt-1">
+          {onEdit && (
+            <Pressable
+              onPress={() => onEdit(expense)}
+              hitSlop={8}
+              className="px-1 py-0.5 cursor-pointer"
+            >
+              <Text className="text-emerald-400 hover:text-emerald-300 text-xs font-medium">Editar</Text>
+            </Pressable>
+          )}
+
+          {onDelete && (
+            <Pressable
+              onPress={() => onDelete(expense)}
+              hitSlop={8}
+              className="px-1 py-0.5 cursor-pointer"
+            >
+              <Text className="text-slate-500 hover:text-red-400 text-xs">Excluir</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
     </View>
   );
